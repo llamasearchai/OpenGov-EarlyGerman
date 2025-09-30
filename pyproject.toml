@@ -1,0 +1,111 @@
+[build-system]
+requires = ["hatchling>=1.18.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "opengov-earlygerman"
+version = "0.1.0"
+description = "AI-powered comprehensive German language learning platform with cultural immersion"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Nik Jois", email = "nikjois@llamasearch.ai"}
+]
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Education",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Education",
+]
+dependencies = [
+    "pydantic>=2.4.0",
+    "pydantic-settings>=2.0.0",
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "httpx>=0.25.0",
+    "openai>=1.3.0",
+    "sqlalchemy>=2.0.0",
+    "alembic>=1.12.0",
+    "redis>=5.0.0",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-multipart>=0.0.6",
+    "structlog>=23.2.0",
+    "python-dotenv>=1.0.0",
+    "typer>=0.9.0",
+    "rich>=13.6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
+    "pytest-mock>=3.12.0",
+    "hypothesis>=6.90.0",
+    "mypy>=1.7.0",
+    "ruff>=0.1.6",
+    "black>=23.11.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/opengov/earlygerman"
+Repository = "https://github.com/opengov/earlygerman"
+
+[project.scripts]
+deutsch = "opengov_earlygerman.cli:app"
+
+[tool.hatch.envs.default]
+dependencies = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
+    "mypy>=1.7.0",
+    "ruff>=0.1.6",
+    "black>=23.11.0",
+]
+
+[tool.hatch.envs.default.scripts]
+test = "pytest {args:tests}"
+test-cov = "pytest --cov=opengov_earlygerman --cov-report=term-missing {args:tests}"
+lint = "ruff check opengov_earlygerman tests"
+fmt = "black opengov_earlygerman tests"
+fmt-check = "black --check opengov_earlygerman tests"
+type = "mypy opengov_earlygerman tests"
+serve = "uvicorn opengov_earlygerman.api.main:app --reload --host 0.0.0.0 --port 8000"
+all = ["fmt", "lint", "type", "test"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM", "RUF"]
+ignore = ["E501", "B008", "RUF012"]
+
+[tool.black]
+line-length = 100
+target-version = ["py39", "py310", "py311"]
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+warn_return_any = true
+
+[[tool.mypy.overrides]]
+module = ["streamlit.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = "-ra -q --strict-markers"
+markers = [
+    "slow: marks tests as slow",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
+asyncio_mode = "auto"
